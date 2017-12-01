@@ -1,0 +1,176 @@
+*===================================================
+* Cambodia Injection Use Manuscript 
+* Program: Cambodia Injection Manuscript.do
+* Created by: Tatenda Yemeke
+* Date: February 8, 2017
+*===================================================
+clear
+set more off
+set linesize 100
+capture log close
+cd "C:\Users\tyemeke\Dropbox\GHEPS\Manuscripts\Cambodia Injection Use"
+use "C:\Users\tyemeke\Dropbox\GHEPS\Manuscripts\Cambodia Injection Use\YesSickYesTreat.dta", clear
+log using Cambodia_Injection_Use.log,text replace
+*===================================================
+* Generate new categorical variable facility based on Q59
+*===================================================
+generate provider = .
+replace provider = 1 if Q59 <=4
+replace provider = 2 if  Q59 > 4 & Q59 <= 9
+replace provider = 3 if Q59 >9
+lab var provider "Provider Type"
+lab def provider_lab 1 "Public" 2 "Private" 3 "Informal", modify
+label val provider provider_lab
+tabulate Q59 provider
+tab provider
+sktest provider
+doedit "C:\Users\tyemeke\Dropbox\GHEPS\Manuscripts\Cambodia Injection Use\Cambodia Injection Manuscript.do" 
+clear
+set more off
+set linesize 100
+capture log close
+cd "C:\Users\tyemeke\Dropbox\GHEPS\Manuscripts\Cambodia Injection Use"
+use "C:\Users\tyemeke\Dropbox\GHEPS\Manuscripts\Cambodia Injection Use\YesSickYesTreat.dta", clear
+log using Cambodia_Injection_Use.log,text replace
+codebook txfac
+codebook Q59
+summarize Q59
+tab Q59
+generate provider = .
+replace provider = 1 if Q59 <=4
+replace provider = 2 if  Q59 > 4 & Q59 <= 9
+replace provider = 3 if Q59 >9
+lab var provider "Provider Type"
+lab def provider_lab 1 "Public" 2 "Private" 3 "Informal", modify
+label val provider provider_lab
+tabulate Q59 provider
+tab provider
+sktest provider
+codebook Q5121
+tab Q5121
+tab Q5151
+codebook Q5151
+codebook Q5171
+tab Q5171
+codebook Q5181
+tab Q5181
+codebook Q5191
+tab Q5191
+codebook Q520
+codebook Q5201
+tab Q5201
+anova provider Q5171
+anova Q5171 provider
+oneway Q5171 provider
+oneway Q5151 provider
+codebook Q59
+tab Q59
+bysort provider: tab Q511
+tab provider Q511
+tab injec provider
+tab injec provider, chi2
+anova Q5151 provider
+oneway Q5151 provider
+oneway Q5171 provider
+tab Q5171 injec, chi2
+oneway Q5171 provider
+oneway Q5121 provider
+oneway Q5121 injec
+bysort provider: summ Q31
+oneway Q31 provider
+anova injec provider
+oneway injec provider
+tab injec provider, chi2
+oneway Q5171 provider
+codebook Q5121
+tab Q5121
+oneway Q5121 provider
+tab Q5171 injec
+tab Q5171 injec, chi2
+ttest Q5171, by (injec)
+ttest injec Q31
+ttest Q31, by (injec)
+tab injection
+tab injec
+bysort provider: summ Q31
+bysort injec: summ Q31
+ttest Q31, by (injec)
+codebook sex
+codebook Q32
+bysort injec: summ Q32
+tab injec Q32
+tab injec Q32, column
+tab injec Q32, row
+tab injec Q32, row column
+tab injec Q32, chi2
+tab Q33
+tab injec Q33
+tab injec Q33, row
+tab injec Q33, chi2
+tab injec Q33,exact
+tab injec Q32
+tab injec Q35
+bysort injec: summ Q32
+bysort injec: summ Q35
+ttest Q35,by (injec)
+tab Q541
+tab Q542
+tab injec Q541
+tab injec Q542
+tab Q549OTH
+tab injec Q549OTH
+bysort injec: summ Q31
+tab injec Q55
+tab injec Q38
+tab injec Q38, row
+ tab injec Q38, chi2
+tab injec Q55, row
+tab injec Q55, chi2 row
+tab injec Q514, chi2 row
+tab Q514
+tab injec provider, chi2
+tab Q23
+tab hcare
+tab hcare Q31
+tab injec provider, row chi2
+tab injec provider, row exact
+tab SESqnt injec
+codebook SESqnt
+tab SESqnt injec, chi2
+codebook SESqnt
+tab Q56
+tab Q56Insurance
+save "C:\Users\tyemeke\Dropbox\GHEPS\Manuscripts\Cambodia Injection Use\YesSickYesTreat.dta", replace
+tab injec Q56
+ tab injec Q56, row chi2
+tab injec provider, row chi2
+tab SES
+tab SESqnt injec, chi2
+tab SESqnt injec, chi2 row
+tab SESqnt injec, chi2 column
+bysort injec: summ Q31
+codebook Q5171
+tab Q5171 provider, chi2
+bysort provider: summarize Q5171
+bysort injec: summ Q5171
+bysort injec: summ Q5171, detail
+ttest Q5171, by(injec)
+tab Q514
+ttest Q5171, by(Q514)
+regress Q5171 injec Q31 provider Q55
+glm Q5171 injec Q31 provider Q55, fam(normal) link (identity)
+corr injec Q31 provider Q55
+regress Q5171 injec Q31 provider Q55 Q56
+regress Q5171 injec Q31 provider Q55 Q514
+glm Q5171 injec Q31 provider Q55 Q514, fam(normal) link (identity)
+regress Q5171 injec Q31 provider Q55 Q514
+outreg  using test.doc, replace
+regsave using test.doc, tstat pval ci
+regress Q5171 injec Q31 provider Q55 Q514
+regasave, tstat pval ci
+rvpplot Q5171
+regress Q5171 injec Q31 provider Q55 Q514
+estimates store m1
+estout m1
+esttab
+eststo: regress Q5171 injec Q31 provider Q55 Q514
